@@ -2,584 +2,633 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-  <title>SULA MD | Futuristic Countdown</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
+  <title>SULA MD | Modern Countdown</title>
+  <!-- Google Fonts + Premium Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      user-select: none; /* optional, keeps sleek look */
     }
 
     body {
-      font-family: 'Inter', 'Orbitron', sans-serif;
-      background: radial-gradient(circle at 20% 30%, #03030f, #000000);
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(145deg, #f8fafc 0%, #eef2f5 100%);
       min-height: 100vh;
       overflow-x: hidden;
-      color: #ffffff;
+      color: #1a2c3e;
       position: relative;
     }
 
-    /* canvas particles background */
-    #particle-canvas {
+    /* Animated gradient background (modern, soft movement) */
+    .animated-bg {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      pointer-events: none;
       z-index: 0;
-      display: block;
+      background: radial-gradient(circle at 20% 30%, rgba(255,255,245,0.6) 0%, rgba(225,235,245,0.9) 100%);
+      opacity: 0.7;
     }
 
-    /* main content layer */
-    .content {
+    .animated-bg::before {
+      content: '';
+      position: absolute;
+      width: 200%;
+      height: 200%;
+      top: -50%;
+      left: -50%;
+      background: repeating-linear-gradient(45deg, rgba(100,150,200,0.03) 0px, rgba(100,150,200,0.03) 2px, transparent 2px, transparent 8px);
+      animation: slowShift 32s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes slowShift {
+      0% { transform: translate(0, 0) rotate(0deg); }
+      100% { transform: translate(30px, 30px) rotate(2deg); }
+    }
+
+    /* main container */
+    .countdown-container {
       position: relative;
       z-index: 2;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+      min-height: 100vh;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: 100vh;
-      padding: 2rem 1.5rem;
-      backdrop-filter: blur(2px);
     }
 
-    /* glassmorphic card container */
-    .glass-panel {
-      max-width: 1200px;
+    /* premium glass card */
+    .premium-card {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(12px);
+      border-radius: 2.5rem;
+      box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(0,0,0,0.02), 0 0 0 1px rgba(148, 163, 184, 0.1) inset;
       width: 100%;
-      background: rgba(12, 12, 30, 0.55);
-      backdrop-filter: blur(14px);
-      border-radius: 3rem;
-      border: 1px solid rgba(0, 255, 255, 0.25);
-      box-shadow: 0 25px 45px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(0, 255, 255, 0.1) inset;
-      padding: 2rem 2rem 2.5rem;
-      transition: all 0.3s ease;
+      padding: 2.5rem 2rem;
+      transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1), box-shadow 0.4s ease;
     }
 
-    @media (max-width: 640px) {
-      .glass-panel {
-        padding: 1.5rem 1.2rem;
-        border-radius: 2rem;
-      }
+    .premium-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 35px 50px -18px rgba(0, 0, 0, 0.25);
     }
 
-    /* header */
-    .hero-title {
+    /* header area */
+    .brand-section {
       text-align: center;
-      margin-bottom: 1.8rem;
-    }
-    .badge {
-      font-family: 'Orbitron', monospace;
-      background: linear-gradient(135deg, #00f2fe, #4facfe);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      font-size: 0.85rem;
-      letter-spacing: 3px;
-      font-weight: 600;
-      text-transform: uppercase;
-      display: inline-block;
-      border: 1px solid rgba(0, 242, 254, 0.4);
-      padding: 0.2rem 1rem;
-      border-radius: 40px;
-      backdrop-filter: blur(4px);
-      margin-bottom: 1rem;
-    }
-    h1 {
-      font-family: 'Orbitron', monospace;
-      font-weight: 800;
-      font-size: 3rem;
-      background: linear-gradient(125deg, #FFFFFF, #7FDBFF, #00e0ff);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      letter-spacing: -0.02em;
-      text-shadow: 0 0 12px rgba(0,255,255,0.3);
-    }
-    @media (max-width: 640px) {
-      h1 {
-        font-size: 2rem;
-      }
-    }
-    .sub {
-      color: #bbd4ff;
-      font-weight: 400;
-      letter-spacing: 1px;
-      margin-top: 0.6rem;
-      font-size: 1rem;
-      opacity: 0.9;
+      margin-bottom: 2rem;
     }
 
-    /* image section futuristic */
+    .badge {
+      display: inline-block;
+      background: #e9f0f9;
+      backdrop-filter: blur(4px);
+      padding: 0.3rem 1.1rem;
+      border-radius: 40px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #2c5a7a;
+      margin-bottom: 1rem;
+      border: 1px solid rgba(44, 90, 122, 0.2);
+    }
+
+    h1 {
+      font-size: 3.2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #1e3b4f, #2b5c7a);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 0.5rem;
+    }
+
+    .subhead {
+      font-size: 1rem;
+      font-weight: 500;
+      color: #4a627a;
+      border-bottom: 1px solid #cbdde9;
+      display: inline-block;
+      padding-bottom: 0.3rem;
+    }
+
+    /* image container */
     .image-wrapper {
       display: flex;
       justify-content: center;
-      margin: 1.2rem 0 2rem;
-    }
-    .release-img {
-      max-width: 220px;
-      width: 70%;
-      border-radius: 32px;
-      box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.7), 0 0 0 3px rgba(0, 255, 255, 0.3), 0 0 0 6px rgba(0, 0, 0, 0.2);
-      transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1), filter 0.3s;
-      filter: drop-shadow(0 0 6px cyan);
-    }
-    .release-img:hover {
-      transform: scale(1.02) rotate(1deg);
-      filter: drop-shadow(0 0 14px cyan);
+      margin: 1.8rem 0 2rem;
     }
 
-    /* countdown grid */
+    .release-art {
+      max-width: 210px;
+      width: 65%;
+      border-radius: 1.8rem;
+      box-shadow: 0 25px 30px -12px rgba(0, 0, 0, 0.25);
+      transition: all 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.2);
+      filter: brightness(1.01) contrast(1.02);
+      border: 2px solid rgba(255,255,240,0.8);
+    }
+
+    .release-art:hover {
+      transform: scale(1.02) rotate(0.5deg);
+      box-shadow: 0 30px 40px -14px rgba(0, 0, 0, 0.3);
+    }
+
+    /* countdown grid premium */
     .countdown-grid {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 1.5rem;
-      margin: 2rem 0 1rem;
+      gap: 1.6rem;
+      margin: 2.2rem 0 1.8rem;
     }
-    .time-card {
-      background: rgba(0, 0, 0, 0.55);
+
+    .time-block {
+      background: rgba(255, 255, 255, 0.8);
       backdrop-filter: blur(8px);
       border-radius: 2rem;
-      padding: 1rem 0.8rem;
       min-width: 110px;
+      padding: 1.2rem 0.5rem;
       text-align: center;
-      border: 1px solid rgba(0, 230, 250, 0.5);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.4), 0 0 12px rgba(0,255,255,0.2);
-      transition: all 0.2s ease;
+      box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(0, 0, 0, 0.02);
+      transition: all 0.3s ease;
+      cursor: default;
     }
-    .time-card:hover {
-      transform: translateY(-6px);
-      border-color: #0ff;
-      box-shadow: 0 15px 30px rgba(0, 200, 255, 0.2);
+
+    .time-block:hover {
+      transform: translateY(-8px);
+      background: white;
+      box-shadow: 0 20px 30px -12px rgba(0, 0, 0, 0.15);
     }
+
     .time-number {
-      font-family: 'Orbitron', monospace;
+      font-size: 3.4rem;
       font-weight: 800;
-      font-size: 3.2rem;
-      background: linear-gradient(145deg, #f0fcff, #0af);
+      font-feature-settings: "tnum";
+      font-variant-numeric: tabular-nums;
+      color: #1c4e6e;
+      line-height: 1.1;
+      letter-spacing: 2px;
+      transition: transform 0.2s ease;
+      display: inline-block;
+    }
+
+    /* animation for number change (hard pop) */
+    .number-pop {
+      animation: numberPop 0.28s cubic-bezier(0.34, 1.2, 0.64, 1);
+    }
+
+    @keyframes numberPop {
+      0% { transform: scale(0.92); opacity: 0.6; }
+      80% { transform: scale(1.08); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .time-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #5f7f9a;
+      margin-top: 8px;
+    }
+
+    /* release status message */
+    .release-status {
+      background: rgba(44, 90, 122, 0.08);
+      backdrop-filter: blur(8px);
+      border-radius: 60px;
+      padding: 0.6rem 1.6rem;
+      display: inline-block;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #1f5e7e;
+      margin: 0.6rem 0;
+      border: 1px solid rgba(44, 90, 122, 0.2);
+    }
+
+    .release-date {
+      font-family: monospace;
+      font-weight: 500;
+      background: #eef3fc;
+      display: inline-block;
+      padding: 0.3rem 1rem;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      margin-top: 0.5rem;
+      color: #2b4f6c;
+    }
+
+    /* footer credits */
+    .footer-modern {
+      margin-top: 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(100, 120, 140, 0.2);
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #4f6f8a;
+    }
+
+    .creator-highlight {
+      background: linear-gradient(120deg, #1f5e7e, #2c4f6e);
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
-      letter-spacing: 4px;
-      line-height: 1;
-      text-shadow: 0 0 8px cyan;
+      font-weight: 700;
+      letter-spacing: 0.5px;
     }
-    .time-label {
-      font-family: 'Inter', sans-serif;
-      font-weight: 500;
-      letter-spacing: 2px;
-      font-size: 0.85rem;
-      text-transform: uppercase;
-      color: #b3f0ff;
-      margin-top: 8px;
+
+    .social-icon {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
     }
-    @media (max-width: 580px) {
-      .countdown-grid {
-        gap: 0.8rem;
+
+    /* responsive mobile */
+    @media (max-width: 680px) {
+      .countdown-container {
+        padding: 1rem;
       }
-      .time-card {
-        min-width: 70px;
-        padding: 0.7rem 0.4rem;
+      .premium-card {
+        padding: 1.5rem;
+        border-radius: 2rem;
+      }
+      h1 {
+        font-size: 2.2rem;
+      }
+      .time-block {
+        min-width: 75px;
+        padding: 0.8rem 0.2rem;
       }
       .time-number {
         font-size: 2rem;
-        letter-spacing: 2px;
       }
       .time-label {
         font-size: 0.65rem;
+        letter-spacing: 1px;
+      }
+      .countdown-grid {
+        gap: 0.8rem;
+      }
+      .footer-modern {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.6rem;
+      }
+      .release-art {
+        max-width: 160px;
       }
     }
 
-    /* message and release info */
-    .release-message {
-      text-align: center;
-      margin: 1rem 0 0.8rem;
-      font-weight: 500;
-      background: rgba(0, 20, 40, 0.6);
-      display: inline-block;
-      width: auto;
-      padding: 0.5rem 1.8rem;
-      border-radius: 60px;
-      backdrop-filter: blur(5px);
-      font-size: 0.95rem;
-      border-left: 3px solid cyan;
-      border-right: 3px solid cyan;
-    }
-    .date-stamp {
-      font-family: 'Orbitron';
-      font-size: 1rem;
-      color: #88ddff;
-      margin: 0.5rem 0;
-      letter-spacing: 1px;
+    @media (max-width: 480px) {
+      .time-number {
+        font-size: 1.8rem;
+      }
+      .time-block {
+        min-width: 68px;
+      }
     }
 
-    /* footer + credits */
-    .footer-credits {
-      margin-top: 2.5rem;
-      text-align: center;
-      font-size: 0.85rem;
-      font-weight: 400;
-      color: #b0d4ff;
-      border-top: 1px dashed rgba(0, 255, 255, 0.3);
-      padding-top: 1.5rem;
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-    .creator {
-      font-family: 'Orbitron', monospace;
-      background: linear-gradient(145deg, #c0ffff, #0088ff);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      font-weight: 600;
-      letter-spacing: 1px;
-    }
-    .glow-text {
-      text-shadow: 0 0 6px cyan;
-    }
-    .small-note {
-      font-size: 0.7rem;
-      opacity: 0.7;
-    }
-    a {
-      color: #7ffdff;
-      text-decoration: none;
-      transition: 0.2s;
-    }
-    a:hover {
-      text-shadow: 0 0 6px cyan;
+    /* hard animation on initial load */
+    .premium-card {
+      animation: cardGlide 0.7s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    /* animated pulse on date */
-    @keyframes pulseGlow {
-      0% { text-shadow: 0 0 2px cyan; border-color: rgba(0,255,255,0.3);}
-      100% { text-shadow: 0 0 12px cyan; border-color: cyan;}
+    @keyframes cardGlide {
+      0% {
+        opacity: 0;
+        transform: translateY(30px) scale(0.97);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
     }
-    .time-card {
-      animation: fadeSlideUp 0.6s ease-out backwards;
+
+    .time-block {
+      animation: blockFadeUp 0.5s ease-out backwards;
     }
-    @keyframes fadeSlideUp {
+
+    .time-block:nth-child(1) { animation-delay: 0.1s; }
+    .time-block:nth-child(2) { animation-delay: 0.2s; }
+    .time-block:nth-child(3) { animation-delay: 0.3s; }
+    .time-block:nth-child(4) { animation-delay: 0.4s; }
+
+    @keyframes blockFadeUp {
       from {
         opacity: 0;
-        transform: translateY(25px);
+        transform: translateY(20px);
       }
       to {
         opacity: 1;
         transform: translateY(0);
       }
     }
-    .time-card:nth-child(1) { animation-delay: 0.1s; }
-    .time-card:nth-child(2) { animation-delay: 0.2s; }
-    .time-card:nth-child(3) { animation-delay: 0.3s; }
-    .time-card:nth-child(4) { animation-delay: 0.4s; }
 
-    /* responsive adjustments */
-    @media (max-width: 480px) {
-      .glass-panel {
-        padding: 1.3rem;
-      }
-      .release-img {
-        max-width: 160px;
-      }
+    /* additional modern hover micro */
+    .release-status {
+      transition: all 0.25s;
+    }
+    .release-status:hover {
+      background: rgba(44, 90, 122, 0.15);
+      transform: scale(1.01);
     }
   </style>
 </head>
 <body>
-
-<canvas id="particle-canvas"></canvas>
-
-<div class="content">
-  <div class="glass-panel">
-    <div class="hero-title">
-      <div class="badge">✦ COUNTDOWN INITIATED ✦</div>
-      <h1>SULA MD<br><span style="font-size: 1.8rem; background: none; -webkit-background-clip: unset; color: #bbf0ff;">RELEASE EVENT</span></h1>
-      <div class="sub">Next‑gen WhatsApp Bot Ecosystem — Quantum Leap</div>
+<div class="animated-bg"></div>
+<div class="countdown-container">
+  <div class="premium-card">
+    <div class="brand-section">
+      <div class="badge">✦ LIMITED LAUNCH ✦</div>
+      <h1>SULA MD</h1>
+      <div class="subhead">Next‑Gen WhatsApp Intelligence</div>
     </div>
 
-    <!-- Image from catbox with futuristic touch -->
+    <!-- Image from catbox -->
     <div class="image-wrapper">
-      <img class="release-img" src="https://files.catbox.moe/xiy0uc.jpg" alt="SULA MD futuristic emblem" loading="eager">
+      <img class="release-art" src="https://files.catbox.moe/xiy0uc.jpg" alt="SULA MD premium visual" loading="eager">
     </div>
 
-    <!-- Countdown section -->
+    <!-- Premium Countdown Grid -->
     <div class="countdown-grid">
-      <div class="time-card">
+      <div class="time-block" id="daysBlock">
         <div class="time-number" id="days">00</div>
         <div class="time-label">DAYS</div>
       </div>
-      <div class="time-card">
+      <div class="time-block" id="hoursBlock">
         <div class="time-number" id="hours">00</div>
         <div class="time-label">HOURS</div>
       </div>
-      <div class="time-card">
+      <div class="time-block" id="minutesBlock">
         <div class="time-number" id="minutes">00</div>
         <div class="time-label">MINUTES</div>
       </div>
-      <div class="time-card">
+      <div class="time-block" id="secondsBlock">
         <div class="time-number" id="seconds">00</div>
         <div class="time-label">SECONDS</div>
       </div>
     </div>
 
+    <!-- status and release info -->
     <div style="text-align: center;">
-      <div class="release-message" id="statusMsg">
-        🌟 PREPARING FOR LAUNCH 🌟
+      <div class="release-status" id="statusMessage">
+        🌟 COUNTDOWN TO REVOLUTION 🌟
       </div>
-      <div class="date-stamp">
-        📅 RELEASE DATE: <strong>APRIL 5, 2026</strong> — 00:00 GMT+0 / LOCAL
+      <div class="release-date">
+        📅 RELEASE DATE: APRIL 5, 2026 — 00:00 (YOUR LOCAL TIME)
       </div>
     </div>
 
-    <div class="footer-credits">
-      <span>⚡ <span class="glow-text">#SULA_MD</span> — The future of automation</span>
-      <span>🎨 WEB CREATOR: <span class="creator">THENUX</span> ⚡</span>
-      <span class="small-note">✦ CYBER PULSE EDITION ✦</span>
+    <!-- modern footer with THENUX credits -->
+    <div class="footer-modern">
+      <div class="social-icon">
+        <span>⚡ SULA ECOSYSTEM</span>
+      </div>
+      <div>
+        WEB CREATOR: <span class="creator-highlight">THENUX</span> ✦ PREMIUM EDITION
+      </div>
+      <div>
+        <span>✨ #SULA_MD</span>
+      </div>
     </div>
   </div>
 </div>
 
 <script>
   (function() {
-    // ---------- FUTURISTIC COUNTDOWN LOGIC ----------
-    // Target: April 5, 2026, local midnight (respect user's timezone)
-    // Using month index 3 (April) and day 5, 0:00:00
-    const targetDate = new Date(2026, 3, 5, 0, 0, 0);
-    
-    // DOM elements
-    const daysSpan = document.getElementById('days');
-    const hoursSpan = document.getElementById('hours');
-    const minutesSpan = document.getElementById('minutes');
-    const secondsSpan = document.getElementById('seconds');
-    const statusMsgSpan = document.getElementById('statusMsg');
+    // Target: April 5, 2026, local midnight (user's timezone)
+    const targetDate = new Date(2026, 3, 5, 0, 0, 0); // month is 0-index: 3 = April
+
+    const daysElement = document.getElementById('days');
+    const hoursElement = document.getElementById('hours');
+    const minutesElement = document.getElementById('minutes');
+    const secondsElement = document.getElementById('seconds');
+    const statusMsgDiv = document.getElementById('statusMessage');
+
+    // Store previous values to trigger animation only when changed
+    let prevDays = -1, prevHours = -1, prevMins = -1, prevSecs = -1;
+
+    // Helper to add pop animation class and remove after timeout
+    function addPopAnimation(element) {
+      if (!element) return;
+      element.classList.add('number-pop');
+      setTimeout(() => {
+        element.classList.remove('number-pop');
+      }, 280);
+    }
 
     function updateCountdown() {
       const now = new Date();
       const diffMs = targetDate - now;
-      
+
       if (diffMs <= 0) {
-        // Release has arrived or passed
-        daysSpan.innerText = '00';
-        hoursSpan.innerText = '00';
-        minutesSpan.innerText = '00';
-        secondsSpan.innerText = '00';
-        statusMsgSpan.innerHTML = '✨ LAUNCHED — EXPERIENCE THE FUTURE NOW ✨';
-        statusMsgSpan.style.borderLeftColor = '#f0f';
-        statusMsgSpan.style.borderRightColor = '#f0f';
+        // Release time arrived
+        daysElement.innerText = '00';
+        hoursElement.innerText = '00';
+        minutesElement.innerText = '00';
+        secondsElement.innerText = '00';
+        statusMsgDiv.innerHTML = '🚀 LAUNCHED — EXPERIENCE THE FUTURE 🚀';
+        statusMsgDiv.style.background = "rgba(0, 80, 100, 0.12)";
+        statusMsgDiv.style.borderColor = "#2c7a5e";
         return;
       }
-      
-      // calculate remaining time
+
       const totalSeconds = Math.floor(diffMs / 1000);
       const days = Math.floor(totalSeconds / 86400);
       const hours = Math.floor((totalSeconds % 86400) / 3600);
       const minutes = Math.floor((totalSeconds % 3600) / 60);
       const seconds = totalSeconds % 60;
-      
-      // format with leading zeros
-      daysSpan.innerText = days.toString().padStart(2, '0');
-      hoursSpan.innerText = hours.toString().padStart(2, '0');
-      minutesSpan.innerText = minutes.toString().padStart(2, '0');
-      secondsSpan.innerText = seconds.toString().padStart(2, '0');
-      
-      // dynamic message if less than 2 days
-      if (days === 0 && hours < 24) {
-        statusMsgSpan.innerHTML = '🚀 ULTIMATE COUNTDOWN — ALMOST HERE! 🚀';
-      } else if (days <= 1) {
-        statusMsgSpan.innerHTML = '⚡ FINAL COUNTDOWN — PREPARE FOR LAUNCH ⚡';
+
+      // Format with leading zeros
+      const daysStr = days.toString().padStart(2, '0');
+      const hoursStr = hours.toString().padStart(2, '0');
+      const minutesStr = minutes.toString().padStart(2, '0');
+      const secondsStr = seconds.toString().padStart(2, '0');
+
+      // Update DOM with animation only if value changed
+      if (prevDays !== daysStr) {
+        daysElement.innerText = daysStr;
+        addPopAnimation(daysElement);
+        prevDays = daysStr;
       } else {
-        statusMsgSpan.innerHTML = '🌟 OFFICIAL COUNTDOWN ACTIVE — GET READY 🌟';
+        daysElement.innerText = daysStr;
+      }
+
+      if (prevHours !== hoursStr) {
+        hoursElement.innerText = hoursStr;
+        addPopAnimation(hoursElement);
+        prevHours = hoursStr;
+      } else {
+        hoursElement.innerText = hoursStr;
+      }
+
+      if (prevMins !== minutesStr) {
+        minutesElement.innerText = minutesStr;
+        addPopAnimation(minutesElement);
+        prevMins = minutesStr;
+      } else {
+        minutesElement.innerText = minutesStr;
+      }
+
+      if (prevSecs !== secondsStr) {
+        secondsElement.innerText = secondsStr;
+        addPopAnimation(secondsElement);
+        prevSecs = secondsStr;
+      } else {
+        secondsElement.innerText = secondsStr;
+      }
+
+      // dynamic status message with premium vibe
+      if (days === 0 && hours < 1) {
+        statusMsgDiv.innerHTML = '⏳ FINAL HOUR — ALMOST HERE ⏳';
+      } else if (days === 0 && hours < 12) {
+        statusMsgDiv.innerHTML = '⚡ ULTIMATE COUNTDOWN — PREPARE ⚡';
+      } else if (days <= 2) {
+        statusMsgDiv.innerHTML = '✨ INTENSE COUNTDOWN — STAY TUNED ✨';
+      } else {
+        statusMsgDiv.innerHTML = '🌟 OFFICIAL COUNTDOWN — GET READY 🌟';
       }
     }
-    
-    // initial call
+
+    // Initial call
     updateCountdown();
-    // update every second
+    // Update every second
     const interval = setInterval(updateCountdown, 1000);
-    
-    // (optional cleanup not needed for regular page)
-  })();
 
-  // ---------- ADVANCED PARTICLE BACKGROUND (FUTURISTIC ANIMATION) ----------
-  (function initParticles() {
-    const canvas = document.getElementById('particle-canvas');
-    let ctx = canvas.getContext('2d');
-    let particlesArray = [];
-    let animationId = null;
-    let resizeTimeout;
-
-    // config
-    const PARTICLE_COUNT = 110;
-    const MAX_RADIUS = 2.8;
-    const MIN_RADIUS = 1.2;
-    
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      initParticlesArray();
-    }
-    
-    class Particle {
-      constructor(x, y, radius, speedX, speedY, color) {
-        this.x = x;
-        this.y = y;
-        this.radius = radius;
-        this.speedX = speedX;
-        this.speedY = speedY;
-        this.color = color;
-      }
-      draw() {
-        if (!ctx) return;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = this.color;
-        ctx.shadowBlur = 6;
-        ctx.shadowColor = `rgba(0, 200, 255, 0.6)`;
-        ctx.fill();
-        ctx.shadowBlur = 0; // reset for performance
-      }
-      update() {
-        this.x += this.speedX;
-        this.y += this.speedY;
-        
-        // wrap around edges with smooth teleport
-        if (this.x + this.radius < 0) this.x = canvas.width + this.radius;
-        if (this.x - this.radius > canvas.width) this.x = -this.radius;
-        if (this.y + this.radius < 0) this.y = canvas.height + this.radius;
-        if (this.y - this.radius > canvas.height) this.y = -this.radius;
-        
-        this.draw();
-      }
-    }
-    
-    function initParticlesArray() {
-      if (!canvas) return;
-      particlesArray = [];
-      const colors = ['#0ff', '#4effdc', '#3a86ff', '#9d4edd', '#f72585', '#00c3ff', '#b5179e'];
-      for (let i = 0; i < PARTICLE_COUNT; i++) {
-        let radius = Math.random() * (MAX_RADIUS - MIN_RADIUS) + MIN_RADIUS;
-        let x = Math.random() * canvas.width;
-        let y = Math.random() * canvas.height;
-        let speedX = (Math.random() - 0.5) * 0.5;
-        let speedY = (Math.random() - 0.5) * 0.5;
-        let color = colors[Math.floor(Math.random() * colors.length)];
-        // occasional neon white
-        if (Math.random() > 0.85) color = '#ffffff';
-        particlesArray.push(new Particle(x, y, radius, speedX, speedY, color));
-      }
-    }
-    
-    function animateParticles() {
-      if (!ctx || !canvas) return;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      // draw a subtle gradient overlay for depth
-      ctx.fillStyle = 'rgba(2, 2, 15, 0.18)';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      
-      for (let p of particlesArray) {
-        p.update();
-      }
-      animationId = requestAnimationFrame(animateParticles);
-    }
-    
-    function setupParticles() {
-      if (!canvas) return;
-      ctx = canvas.getContext('2d');
-      resizeCanvas();
-      window.addEventListener('resize', () => {
-        if (resizeTimeout) clearTimeout(resizeTimeout);
-        resizeTimeout = setTimeout(() => {
-          resizeCanvas();
-        }, 150);
-      });
-      animateParticles();
-    }
-    
-    setupParticles();
-    // Cleanup theoretically not needed, but good practice for SPA but it's fine
+    // Cleanup interval on page unload (optional but good practice)
     window.addEventListener('beforeunload', () => {
-      if (animationId) cancelAnimationFrame(animationId);
+      clearInterval(interval);
     });
   })();
 
-  // Additional tiny micro-interaction: dynamic neon glow on time cards on hover already in CSS
-  // Smooth preloader effect - everything runs fluid
-  // add slight parallax? no needed but adds livelyness
-  
-  // ensure that canvas doesn't block touches and clicks
-  (function ensureCanvasEvents() {
-    const canvasElem = document.getElementById('particle-canvas');
-    if(canvasElem) {
-      canvasElem.style.pointerEvents = 'none';
-    }
-  })();
-  
-  // Animate countdown glint effect on load - smooth initial transition
-  document.addEventListener('DOMContentLoaded', () => {
-    const cards = document.querySelectorAll('.time-card');
-    cards.forEach((card, idx) => {
-      card.style.opacity = '0';
-      setTimeout(() => {
-        card.style.opacity = '1';
-      }, idx * 80);
+  // Additional hard animations: add ripple effect to time blocks on hover
+  // Also enhance smoothness: ensure all transitions are GPU accelerated.
+  (function addPremiumInteractions() {
+    const blocks = document.querySelectorAll('.time-block');
+    blocks.forEach(block => {
+      block.addEventListener('mouseenter', (e) => {
+        // subtle ripple effect using pseudo-element via class (create dynamic)
+        const ripple = document.createElement('span');
+        ripple.className = 'ripple-effect';
+        ripple.style.position = 'absolute';
+        ripple.style.borderRadius = 'inherit';
+        ripple.style.top = '0';
+        ripple.style.left = '0';
+        ripple.style.width = '100%';
+        ripple.style.height = '100%';
+        ripple.style.pointerEvents = 'none';
+        ripple.style.background = 'radial-gradient(circle, rgba(100,160,200,0.2) 0%, rgba(255,255,255,0) 80%)';
+        ripple.style.opacity = '0';
+        ripple.style.transition = 'opacity 0.3s ease';
+        block.style.position = 'relative';
+        block.appendChild(ripple);
+        requestAnimationFrame(() => {
+          ripple.style.opacity = '1';
+        });
+        setTimeout(() => {
+          if (ripple && ripple.remove) ripple.remove();
+        }, 400);
+      });
     });
-    // additional digital pulse
-    const mainTitle = document.querySelector('h1');
-    if(mainTitle) {
-      mainTitle.style.animation = 'glowPulse 2s infinite alternate';
+  })();
+
+  // Add extra sophisticated smooth parallax effect on image (modern minimal)
+  (function subtleParallax() {
+    const img = document.querySelector('.release-art');
+    if (!img) return;
+    window.addEventListener('mousemove', (e) => {
+      const mouseX = e.clientX / window.innerWidth;
+      const mouseY = e.clientY / window.innerHeight;
+      const moveX = (mouseX - 0.5) * 8;
+      const moveY = (mouseY - 0.5) * 6;
+      img.style.transform = `translate(${moveX * 0.5}px, ${moveY * 0.5}px) scale(1.01)`;
+    });
+    window.addEventListener('mouseleave', () => {
+      img.style.transform = 'translate(0px, 0px) scale(1)';
+    });
+  })();
+
+  // animate gradient background slightly for extra smooth motion
+  (function animateGradient() {
+    let tick = 0;
+    const bgDiv = document.querySelector('.animated-bg');
+    if (!bgDiv) return;
+    function shiftBackground() {
+      tick += 0.002;
+      const x = 30 + Math.sin(tick) * 15;
+      const y = 40 + Math.cos(tick * 0.7) * 10;
+      bgDiv.style.background = `radial-gradient(circle at ${x}% ${y}%, rgba(255,250,235,0.85) 0%, rgba(225,235,245,0.92) 100%)`;
+      requestAnimationFrame(shiftBackground);
     }
-    const styleSheet = document.createElement("style");
-    styleSheet.textContent = `
-      @keyframes glowPulse {
-        0% { text-shadow: 0 0 2px cyan; opacity: 0.98;}
-        100% { text-shadow: 0 0 18px #0af, 0 0 5px white; opacity: 1;}
-      }
-      .release-img {
-        animation: softFloat 4s infinite ease-in-out;
-      }
-      @keyframes softFloat {
-        0% { transform: translateY(0px); }
-        50% { transform: translateY(-5px); }
-        100% { transform: translateY(0px); }
-      }
-    `;
-    document.head.appendChild(styleSheet);
+    shiftBackground();
+  })();
+
+  // Add dynamic class for number pop prevention (ensure every second the number pop only on change is already done)
+  // Extra 'hard animation': on load, time blocks individually have elastic effect.
+  document.addEventListener('DOMContentLoaded', () => {
+    const timeNumbers = document.querySelectorAll('.time-number');
+    timeNumbers.forEach((num, idx) => {
+      num.style.animation = 'none';
+      setTimeout(() => {
+        num.style.animation = 'numberPop 0.4s cubic-bezier(0.2, 1.2, 0.8, 1)';
+        setTimeout(() => { num.style.animation = ''; }, 450);
+      }, idx * 120);
+    });
   });
 </script>
-
-<!-- extra futuristic cursor beam? optional but nice subtle -->
 <style>
-  ::selection {
-    background: #0ff;
-    color: #000;
+  /* additional modern ripple utility */
+  .time-block {
+    transition: transform 0.25s ease, box-shadow 0.3s ease;
+    overflow: hidden;
   }
-  body {
-    cursor: default;
+  .ripple-effect {
+    border-radius: inherit;
+    transform: scale(1);
+  }
+  .release-art {
+    transition: transform 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1), box-shadow 0.3s;
+    will-change: transform;
   }
   .time-number {
-    transition: all 0.2s;
+    transition: text-shadow 0.2s;
   }
-  .glass-panel {
-    transition: box-shadow 0.4s;
+  /* slight neon glow on numbers on hover? but modern, keep minimal premium */
+  .time-block:hover .time-number {
+    text-shadow: 0 2px 8px rgba(40, 100, 130, 0.2);
   }
-  .glass-panel:hover {
-    box-shadow: 0 25px 50px rgba(0, 180, 255, 0.2), 0 0 0 1px rgba(0, 255, 255, 0.4) inset;
+  /* ensure counters use tabular nums */
+  .time-number {
+    font-variant-numeric: tabular-nums;
   }
-  button, a {
-    cursor: pointer;
+  .premium-card {
+    transition: transform 0.4s cubic-bezier(0.2, 0.85, 0.4, 1), box-shadow 0.4s;
   }
-  @media (max-width: 500px) {
-    .footer-credits {
-      flex-direction: column;
-      align-items: center;
-      gap: 0.5rem;
-    }
+  /* make image responsive and rounded */
+  .release-art {
+    object-fit: cover;
+    aspect-ratio: 1 / 1;
+    object-position: center;
+  }
+  /* soft focus ring for accessibility */
+  .time-block:focus-visible {
+    outline: 2px solid #2c5a7a;
+    outline-offset: 2px;
   }
 </style>
 </body>
