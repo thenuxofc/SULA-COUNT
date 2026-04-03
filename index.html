@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <title>SULA MD | Futuristic Countdown</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      user-select: none; /* optional, keeps sleek look */
+    }
+
+    body {
+      font-family: 'Inter', 'Orbitron', sans-serif;
+      background: radial-gradient(circle at 20% 30%, #03030f, #000000);
+      min-height: 100vh;
+      overflow-x: hidden;
+      color: #ffffff;
+      position: relative;
+    }
+
+    /* canvas particles background */
+    #particle-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      display: block;
+    }
+
+    /* main content layer */
+    .content {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 2rem 1.5rem;
+      backdrop-filter: blur(2px);
+    }
+
+    /* glassmorphic card container */
+    .glass-panel {
+      max-width: 1200px;
+      width: 100%;
+      background: rgba(12, 12, 30, 0.55);
+      backdrop-filter: blur(14px);
+      border-radius: 3rem;
+      border: 1px solid rgba(0, 255, 255, 0.25);
+      box-shadow: 0 25px 45px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(0, 255, 255, 0.1) inset;
+      padding: 2rem 2rem 2.5rem;
+      transition: all 0.3s ease;
+    }
+
+    @media (max-width: 640px) {
+      .glass-panel {
+        padding: 1.5rem 1.2rem;
+        border-radius: 2rem;
+      }
+    }
+
+    /* header */
+    .hero-title {
+      text-align: center;
+      margin-bottom: 1.8rem;
+    }
+    .badge {
+      font-family: 'Orbitron', monospace;
+      background: linear-gradient(135deg, #00f2fe, #4facfe);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-size: 0.85rem;
+      letter-spacing: 3px;
+      font-weight: 600;
+      text-transform: uppercase;
+      display: inline-block;
+      border: 1px solid rgba(0, 242, 254, 0.4);
+      padding: 0.2rem 1rem;
+      border-radius: 40px;
+      backdrop-filter: blur(4px);
+      margin-bottom: 1rem;
+    }
+    h1 {
+      font-family: 'Orbitron', monospace;
+      font-weight: 800;
+      font-size: 3rem;
+      background: linear-gradient(125deg, #FFFFFF, #7FDBFF, #00e0ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      letter-spacing: -0.02em;
+      text-shadow: 0 0 12px rgba(0,255,255,0.3);
+    }
+    @media (max-width: 640px) {
+      h1 {
+        font-size: 2rem;
+      }
+    }
+    .sub {
+      color: #bbd4ff;
+      font-weight: 400;
+      letter-spacing: 1px;
+      margin-top: 0.6rem;
+      font-size: 1rem;
+      opacity: 0.9;
+    }
+
+    /* image section futuristic */
+    .image-wrapper {
+      display: flex;
+      justify-content: center;
+      margin: 1.2rem 0 2rem;
+    }
+    .release-img {
+      max-width: 220px;
+      width: 70%;
+      border-radius: 32px;
+      box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.7), 0 0 0 3px rgba(0, 255, 255, 0.3), 0 0 0 6px rgba(0, 0, 0, 0.2);
+      transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1), filter 0.3s;
+      filter: drop-shadow(0 0 6px cyan);
+    }
+    .release-img:hover {
+      transform: scale(1.02) rotate(1deg);
+      filter: drop-shadow(0 0 14px cyan);
+    }
+
+    /* countdown grid */
+    .countdown-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1.5rem;
+      margin: 2rem 0 1rem;
+    }
+    .time-card {
+      background: rgba(0, 0, 0, 0.55);
+      backdrop-filter: blur(8px);
+      border-radius: 2rem;
+      padding: 1rem 0.8rem;
+      min-width: 110px;
+      text-align: center;
+      border: 1px solid rgba(0, 230, 250, 0.5);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4), 0 0 12px rgba(0,255,255,0.2);
+      transition: all 0.2s ease;
+    }
+    .time-card:hover {
+      transform: translateY(-6px);
+      border-color: #0ff;
+      box-shadow: 0 15px 30px rgba(0, 200, 255, 0.2);
+    }
+    .time-number {
+      font-family: 'Orbitron', monospace;
+      font-weight: 800;
+      font-size: 3.2rem;
+      background: linear-gradient(145deg, #f0fcff, #0af);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      letter-spacing: 4px;
+      line-height: 1;
+      text-shadow: 0 0 8px cyan;
+    }
+    .time-label {
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      letter-spacing: 2px;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      color: #b3f0ff;
+      margin-top: 8px;
+    }
+    @media (max-width: 580px) {
+      .countdown-grid {
+        gap: 0.8rem;
+      }
+      .time-card {
+        min-width: 70px;
+        padding: 0.7rem 0.4rem;
+      }
+      .time-number {
+        font-size: 2rem;
+        letter-spacing: 2px;
+      }
+      .time-label {
+        font-size: 0.65rem;
+      }
+    }
+
+    /* message and release info */
+    .release-message {
+      text-align: center;
+      margin: 1rem 0 0.8rem;
+      font-weight: 500;
+      background: rgba(0, 20, 40, 0.6);
+      display: inline-block;
+      width: auto;
+      padding: 0.5rem 1.8rem;
+      border-radius: 60px;
+      backdrop-filter: blur(5px);
+      font-size: 0.95rem;
+      border-left: 3px solid cyan;
+      border-right: 3px solid cyan;
+    }
+    .date-stamp {
+      font-family: 'Orbitron';
+      font-size: 1rem;
+      color: #88ddff;
+      margin: 0.5rem 0;
+      letter-spacing: 1px;
+    }
+
+    /* footer + credits */
+    .footer-credits {
+      margin-top: 2.5rem;
+      text-align: center;
+      font-size: 0.85rem;
+      font-weight: 400;
+      color: #b0d4ff;
+      border-top: 1px dashed rgba(0, 255, 255, 0.3);
+      padding-top: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .creator {
+      font-family: 'Orbitron', monospace;
+      background: linear-gradient(145deg, #c0ffff, #0088ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+    .glow-text {
+      text-shadow: 0 0 6px cyan;
+    }
+    .small-note {
+      font-size: 0.7rem;
+      opacity: 0.7;
+    }
+    a {
+      color: #7ffdff;
+      text-decoration: none;
+      transition: 0.2s;
+    }
+    a:hover {
+      text-shadow: 0 0 6px cyan;
+    }
+
+    /* animated pulse on date */
+    @keyframes pulseGlow {
+      0% { text-shadow: 0 0 2px cyan; border-color: rgba(0,255,255,0.3);}
+      100% { text-shadow: 0 0 12px cyan; border-color: cyan;}
+    }
+    .time-card {
+      animation: fadeSlideUp 0.6s ease-out backwards;
+    }
+    @keyframes fadeSlideUp {
+      from {
+        opacity: 0;
+        transform: translateY(25px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .time-card:nth-child(1) { animation-delay: 0.1s; }
+    .time-card:nth-child(2) { animation-delay: 0.2s; }
+    .time-card:nth-child(3) { animation-delay: 0.3s; }
+    .time-card:nth-child(4) { animation-delay: 0.4s; }
+
+    /* responsive adjustments */
+    @media (max-width: 480px) {
+      .glass-panel {
+        padding: 1.3rem;
+      }
+      .release-img {
+        max-width: 160px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="particle-canvas"></canvas>
+
+<div class="content">
+  <div class="glass-panel">
+    <div class="hero-title">
+      <div class="badge">✦ COUNTDOWN INITIATED ✦</div>
+      <h1>SULA MD<br><span style="font-size: 1.8rem; background: none; -webkit-background-clip: unset; color: #bbf0ff;">RELEASE EVENT</span></h1>
+      <div class="sub">Next‑gen WhatsApp Bot Ecosystem — Quantum Leap</div>
+    </div>
+
+    <!-- Image from catbox with futuristic touch -->
+    <div class="image-wrapper">
+      <img class="release-img" src="https://files.catbox.moe/xiy0uc.jpg" alt="SULA MD futuristic emblem" loading="eager">
+    </div>
+
+    <!-- Countdown section -->
+    <div class="countdown-grid">
+      <div class="time-card">
+        <div class="time-number" id="days">00</div>
+        <div class="time-label">DAYS</div>
+      </div>
+      <div class="time-card">
+        <div class="time-number" id="hours">00</div>
+        <div class="time-label">HOURS</div>
+      </div>
+      <div class="time-card">
+        <div class="time-number" id="minutes">00</div>
+        <div class="time-label">MINUTES</div>
+      </div>
+      <div class="time-card">
+        <div class="time-number" id="seconds">00</div>
+        <div class="time-label">SECONDS</div>
+      </div>
+    </div>
+
+    <div style="text-align: center;">
+      <div class="release-message" id="statusMsg">
+        🌟 PREPARING FOR LAUNCH 🌟
+      </div>
+      <div class="date-stamp">
+        📅 RELEASE DATE: <strong>APRIL 5, 2026</strong> — 00:00 GMT+0 / LOCAL
+      </div>
+    </div>
+
+    <div class="footer-credits">
+      <span>⚡ <span class="glow-text">#SULA_MD</span> — The future of automation</span>
+      <span>🎨 WEB CREATOR: <span class="creator">THENUX</span> ⚡</span>
+      <span class="small-note">✦ CYBER PULSE EDITION ✦</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    // ---------- FUTURISTIC COUNTDOWN LOGIC ----------
+    // Target: April 5, 2026, local midnight (respect user's timezone)
+    // Using month index 3 (April) and day 5, 0:00:00
+    const targetDate = new Date(2026, 3, 5, 0, 0, 0);
+    
+    // DOM elements
+    const daysSpan = document.getElementById('days');
+    const hoursSpan = document.getElementById('hours');
+    const minutesSpan = document.getElementById('minutes');
+    const secondsSpan = document.getElementById('seconds');
+    const statusMsgSpan = document.getElementById('statusMsg');
+
+    function updateCountdown() {
+      const now = new Date();
+      const diffMs = targetDate - now;
+      
+      if (diffMs <= 0) {
+        // Release has arrived or passed
+        daysSpan.innerText = '00';
+        hoursSpan.innerText = '00';
+        minutesSpan.innerText = '00';
+        secondsSpan.innerText = '00';
+        statusMsgSpan.innerHTML = '✨ LAUNCHED — EXPERIENCE THE FUTURE NOW ✨';
+        statusMsgSpan.style.borderLeftColor = '#f0f';
+        statusMsgSpan.style.borderRightColor = '#f0f';
+        return;
+      }
+      
+      // calculate remaining time
+      const totalSeconds = Math.floor(diffMs / 1000);
+      const days = Math.floor(totalSeconds / 86400);
+      const hours = Math.floor((totalSeconds % 86400) / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+      
+      // format with leading zeros
+      daysSpan.innerText = days.toString().padStart(2, '0');
+      hoursSpan.innerText = hours.toString().padStart(2, '0');
+      minutesSpan.innerText = minutes.toString().padStart(2, '0');
+      secondsSpan.innerText = seconds.toString().padStart(2, '0');
+      
+      // dynamic message if less than 2 days
+      if (days === 0 && hours < 24) {
+        statusMsgSpan.innerHTML = '🚀 ULTIMATE COUNTDOWN — ALMOST HERE! 🚀';
+      } else if (days <= 1) {
+        statusMsgSpan.innerHTML = '⚡ FINAL COUNTDOWN — PREPARE FOR LAUNCH ⚡';
+      } else {
+        statusMsgSpan.innerHTML = '🌟 OFFICIAL COUNTDOWN ACTIVE — GET READY 🌟';
+      }
+    }
+    
+    // initial call
+    updateCountdown();
+    // update every second
+    const interval = setInterval(updateCountdown, 1000);
+    
+    // (optional cleanup not needed for regular page)
+  })();
+
+  // ---------- ADVANCED PARTICLE BACKGROUND (FUTURISTIC ANIMATION) ----------
+  (function initParticles() {
+    const canvas = document.getElementById('particle-canvas');
+    let ctx = canvas.getContext('2d');
+    let particlesArray = [];
+    let animationId = null;
+    let resizeTimeout;
+
+    // config
+    const PARTICLE_COUNT = 110;
+    const MAX_RADIUS = 2.8;
+    const MIN_RADIUS = 1.2;
+    
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      initParticlesArray();
+    }
+    
+    class Particle {
+      constructor(x, y, radius, speedX, speedY, color) {
+        this.x = x;
+        this.y = y;
+        this.radius = radius;
+        this.speedX = speedX;
+        this.speedY = speedY;
+        this.color = color;
+      }
+      draw() {
+        if (!ctx) return;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.shadowBlur = 6;
+        ctx.shadowColor = `rgba(0, 200, 255, 0.6)`;
+        ctx.fill();
+        ctx.shadowBlur = 0; // reset for performance
+      }
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        
+        // wrap around edges with smooth teleport
+        if (this.x + this.radius < 0) this.x = canvas.width + this.radius;
+        if (this.x - this.radius > canvas.width) this.x = -this.radius;
+        if (this.y + this.radius < 0) this.y = canvas.height + this.radius;
+        if (this.y - this.radius > canvas.height) this.y = -this.radius;
+        
+        this.draw();
+      }
+    }
+    
+    function initParticlesArray() {
+      if (!canvas) return;
+      particlesArray = [];
+      const colors = ['#0ff', '#4effdc', '#3a86ff', '#9d4edd', '#f72585', '#00c3ff', '#b5179e'];
+      for (let i = 0; i < PARTICLE_COUNT; i++) {
+        let radius = Math.random() * (MAX_RADIUS - MIN_RADIUS) + MIN_RADIUS;
+        let x = Math.random() * canvas.width;
+        let y = Math.random() * canvas.height;
+        let speedX = (Math.random() - 0.5) * 0.5;
+        let speedY = (Math.random() - 0.5) * 0.5;
+        let color = colors[Math.floor(Math.random() * colors.length)];
+        // occasional neon white
+        if (Math.random() > 0.85) color = '#ffffff';
+        particlesArray.push(new Particle(x, y, radius, speedX, speedY, color));
+      }
+    }
+    
+    function animateParticles() {
+      if (!ctx || !canvas) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      // draw a subtle gradient overlay for depth
+      ctx.fillStyle = 'rgba(2, 2, 15, 0.18)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      for (let p of particlesArray) {
+        p.update();
+      }
+      animationId = requestAnimationFrame(animateParticles);
+    }
+    
+    function setupParticles() {
+      if (!canvas) return;
+      ctx = canvas.getContext('2d');
+      resizeCanvas();
+      window.addEventListener('resize', () => {
+        if (resizeTimeout) clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+          resizeCanvas();
+        }, 150);
+      });
+      animateParticles();
+    }
+    
+    setupParticles();
+    // Cleanup theoretically not needed, but good practice for SPA but it's fine
+    window.addEventListener('beforeunload', () => {
+      if (animationId) cancelAnimationFrame(animationId);
+    });
+  })();
+
+  // Additional tiny micro-interaction: dynamic neon glow on time cards on hover already in CSS
+  // Smooth preloader effect - everything runs fluid
+  // add slight parallax? no needed but adds livelyness
+  
+  // ensure that canvas doesn't block touches and clicks
+  (function ensureCanvasEvents() {
+    const canvasElem = document.getElementById('particle-canvas');
+    if(canvasElem) {
+      canvasElem.style.pointerEvents = 'none';
+    }
+  })();
+  
+  // Animate countdown glint effect on load - smooth initial transition
+  document.addEventListener('DOMContentLoaded', () => {
+    const cards = document.querySelectorAll('.time-card');
+    cards.forEach((card, idx) => {
+      card.style.opacity = '0';
+      setTimeout(() => {
+        card.style.opacity = '1';
+      }, idx * 80);
+    });
+    // additional digital pulse
+    const mainTitle = document.querySelector('h1');
+    if(mainTitle) {
+      mainTitle.style.animation = 'glowPulse 2s infinite alternate';
+    }
+    const styleSheet = document.createElement("style");
+    styleSheet.textContent = `
+      @keyframes glowPulse {
+        0% { text-shadow: 0 0 2px cyan; opacity: 0.98;}
+        100% { text-shadow: 0 0 18px #0af, 0 0 5px white; opacity: 1;}
+      }
+      .release-img {
+        animation: softFloat 4s infinite ease-in-out;
+      }
+      @keyframes softFloat {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-5px); }
+        100% { transform: translateY(0px); }
+      }
+    `;
+    document.head.appendChild(styleSheet);
+  });
+</script>
+
+<!-- extra futuristic cursor beam? optional but nice subtle -->
+<style>
+  ::selection {
+    background: #0ff;
+    color: #000;
+  }
+  body {
+    cursor: default;
+  }
+  .time-number {
+    transition: all 0.2s;
+  }
+  .glass-panel {
+    transition: box-shadow 0.4s;
+  }
+  .glass-panel:hover {
+    box-shadow: 0 25px 50px rgba(0, 180, 255, 0.2), 0 0 0 1px rgba(0, 255, 255, 0.4) inset;
+  }
+  button, a {
+    cursor: pointer;
+  }
+  @media (max-width: 500px) {
+    .footer-credits {
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+  }
+</style>
+</body>
+</html>
